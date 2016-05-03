@@ -1,6 +1,6 @@
 ## Abstract ##
 
-A simple demo that shows how to use OpenCV within EGE.
+A simple demo that shows how to use OpenCV&FaceTracking with EGE.
 
 ## Screenshots ##
 
