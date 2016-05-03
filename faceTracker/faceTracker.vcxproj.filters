@@ -43,16 +43,10 @@
     <ClInclude Include="cgeFaceTracker.h">
       <Filter>wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="cgeMat.h">
-      <Filter>wrapper</Filter>
-    </ClInclude>
     <ClInclude Include="cgeStaticAssert.h">
       <Filter>wrapper</Filter>
     </ClInclude>
     <ClInclude Include="cgeVec.h">
-      <Filter>wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="cgeFaceCommon.h">
       <Filter>wrapper</Filter>
     </ClInclude>
   </ItemGroup>
