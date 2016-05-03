@@ -127,7 +127,6 @@ namespace CGE
                 m_imageScaling = m_maxImageSize / (float)MIN(m_faceImageSize.width, m_faceImageSize.height);
                 m_scaledImageSize.width = m_faceImageSize.width * m_imageScaling;
                 m_scaledImageSize.height = m_faceImageSize.height * m_imageScaling;
-//                m_cacheImage.create(m_scaledImageSize.height, m_scaledImageSize.width, CV_8UC1);
             }
             else
             {
@@ -158,7 +157,7 @@ namespace CGE
             m_failCount = 0;
         }
         
-        if(m_sucCount > 15) //隔一段时间强制刷新
+        if(m_sucCount > 100) //隔一段时间强制刷新
         {
             checkStatus = true;
             iteration = 10;

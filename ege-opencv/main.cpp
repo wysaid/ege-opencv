@@ -38,12 +38,12 @@ fflush(stderr);\
 
 using namespace CGE;
 
-class CatSprite
+class MySprite
 {
 public:
-    CatSprite() : m_index(0) {}
+    MySprite() : m_index(0) {}
 
-    ~CatSprite()
+    ~MySprite()
     {
         for(PIMAGE pimage : m_sprites)
         {
@@ -53,13 +53,13 @@ public:
         m_sprites.clear();
     }
 
-    bool init(const char* path)
+    bool init(const char* pattern, int count)
     {
         m_sprites.reserve(100);
         char imageFileName[128];
-        for(int i = 0; i != 100; ++i)
+        for(int i = 0; i != count; ++i)
         {
-            sprintf(imageFileName, "%s/catjump_%03d.png", path, i);
+            sprintf(imageFileName, pattern, i);
             PIMAGE image = newimage();
             int ret = getimage_pngfile(image, imageFileName);
             if(ret != 0)
@@ -75,9 +75,9 @@ public:
         return true;
     }
 
-    void render(int x, int y, float rot, float scaling)
+    void render(int x, int y, float centerX, float centerY, float rot, float scaling)
     {
-        putimage_rotatezoom(nullptr, m_sprites[m_index], x, y, 0.5, 1, rot, scaling, 1);
+        putimage_rotatezoom(nullptr, m_sprites[m_index], x, y, centerX, centerY, rot, scaling, 1);
         //putimage(x, y, m_sprites[m_index]);
         ++m_index;
         m_index %= m_sprites.size();
@@ -143,15 +143,15 @@ int main(int argc, const char** argv)
     PIMAGE egeImage = newimage(scrWidth, scrHeight);
     cv::Mat egeMat(getheight(egeImage), getwidth(egeImage), CV_8UC4, getbuffer(egeImage));
 
-    CatSprite catSprite;
+    MySprite catSprite, glassSprite;
 
-    if(!catSprite.init("../res"))
+    if(!(catSprite.init("../res/catjump_%03d.png", 100) && glassSprite.init("../res/glasses_%03d.png", 66)))
     {
         LOG_ERROR("Init sprite failed!");
         return -1;
     }
 
-	for(; is_run(); delay_fps(60))
+	for(; is_run(); delay_fps(30))
 	{ 
 		IplImage* I = cvQueryFrame(camera);
 		if(I == nullptr)
@@ -170,10 +170,8 @@ int main(int argc, const char** argv)
             {
             case 27:
                 return 0;
-            case 'd':
-                faceTracker.resetFrame();
-                break;
             default:
+				faceTracker.resetFrame();
                 break;
             }
         }
@@ -201,16 +199,16 @@ int main(int argc, const char** argv)
 
 		if(hasFace)
 		{
-          faceTracker.drawMeshes(frame, cv::Scalar(255, 0, 255, 255));
-			faceTracker.drawFeature(frame, CGE_FACE_LEFT_EYEBROW, false);
-			faceTracker.drawFeature(frame, CGE_FACE_RIGHT_EYEBROW, false);
-			faceTracker.drawFeature(frame, CGE_FACE_LEFT_EYE);
-			faceTracker.drawFeature(frame, CGE_FACE_RIGHT_EYE);
-			faceTracker.drawFeature(frame, CGE_FACE_JAW, false);
-			faceTracker.drawFeature(frame, CGE_FACE_OUTER_MOUTH);
-			faceTracker.drawFeature(frame, CGE_FACE_INNER_MOUTH);
-			faceTracker.drawFeature(frame, CGE_FACE_NOSE_BRIDGE, false);
-			faceTracker.drawFeature(frame, CGE_FACE_NOSE_BASE);
+// 			faceTracker.drawMeshes(frame, cv::Scalar(255, 0, 255, 255));
+// 			faceTracker.drawFeature(frame, CGE_FACE_LEFT_EYEBROW, false);
+// 			faceTracker.drawFeature(frame, CGE_FACE_RIGHT_EYEBROW, false);
+// 			faceTracker.drawFeature(frame, CGE_FACE_LEFT_EYE);
+// 			faceTracker.drawFeature(frame, CGE_FACE_RIGHT_EYE);
+// 			faceTracker.drawFeature(frame, CGE_FACE_JAW, false);
+// 			faceTracker.drawFeature(frame, CGE_FACE_OUTER_MOUTH);
+// 			faceTracker.drawFeature(frame, CGE_FACE_INNER_MOUTH);
+// 			faceTracker.drawFeature(frame, CGE_FACE_NOSE_BRIDGE, false);
+// 			faceTracker.drawFeature(frame, CGE_FACE_NOSE_BASE);
 		}
 		else
 		{
@@ -250,10 +248,10 @@ int main(int argc, const char** argv)
         putimage(0, 0, egeImage);
         if(hasFace)
         {
-            const Vec2f& v = faceTracker.getCenterPos();
+            const Vec2f& v = faceTracker.getEyeCenterPos();
             Vec2f&& eyeDir = faceTracker.getRightDir();
             float eyeDis = eyeDir.length();
-            float roll = asinf(eyeDir[1] / eyeDis);
+            float roll = -asinf(eyeDir[1] / eyeDis);
             if(eyeDir[0] < 0.0f)
             {
                 roll = PI - roll;
@@ -263,11 +261,14 @@ int main(int argc, const char** argv)
                 roll += PI * 2.0;
             }
 
-            float scaling = eyeDis / catSprite.getWidth() * 5.0f;
-            catSprite.render(v[0], v[1], roll, scaling);
+            float catScaling = eyeDis / catSprite.getWidth() * 4.0f;
+            catSprite.render(v[0], v[1], 0.5f, 1.0f, roll, catScaling);
+			float glassScaling = eyeDis / glassSprite.getWidth() * 2.5f;
+			glassSprite.render(v[0], v[1], 0.5f, 0.5f, roll, glassScaling);
         }
         
         outtextxy(10, 10, "EGE Face Tracker - Single Thread Demo.");
+		outtextxy(10, 50, "Press esc to exit or the others to reset face mesh.");
 	}
 
 	return 0;
