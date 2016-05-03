@@ -7,7 +7,7 @@
  */
 
 #include "cgeFaceTracker.h"
-
+#include <string>
 
 #ifndef CGE_LOG_INFO
 #define CGE_LOG_INFO(...) puts(__VA_ARGS__)
@@ -76,15 +76,16 @@ namespace CGE
 
     void CGEFaceTracker::setupTracker()
     {
-#if defined(_CGE_USE_INTERNAL_TRACKER_)
+#if 1 //defined(_CGE_USE_INTERNAL_TRACKER_)
         if(_isTrackerOK)
         {
             _tracker.FrameReset();
         }
         else
         {
-            static const char ftData[] =
+            static const char* ftData[] = {
 #include "model/conv_face2.tracker"
+            }
                 ;
             static const char* triData =
 #include "model/conv_face.tri"
@@ -92,7 +93,16 @@ namespace CGE
             static const char* conData =
 #include "model/conv_face.con"
                 ;
-            _tracker.LoadFromData(ftData);
+
+            static const int ftLen = sizeof(ftData) / sizeof(*ftData);
+            std::string ftBuffer;
+            ftBuffer.reserve(700000); //700k data
+            for(int i = 0; i != ftLen; ++i)
+            {
+                ftBuffer += ftData[i];
+            }
+
+            _tracker.LoadFromData(ftBuffer.c_str());
             _triModel = FACETRACKER::IO::LoadTriByData(triData);
             _conModel = FACETRACKER::IO::LoadConByData(conData);
             _isTrackerOK = true;
