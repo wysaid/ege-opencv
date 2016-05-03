@@ -65,7 +65,14 @@ void IO::ReadMat(istream& s,cv::Mat &M)
   case CV_8UC1:
     {
       cv::MatIterator_<uchar> i1 = M.begin<uchar>(),i2 = M.end<uchar>();
-      while(i1 != i2)s >> *i1++;
+      //modified by wysaid: be compatible with istringstream.
+      while(i1 != i2)
+      {
+          s >> *i1;
+          if(*i1 >= '0')
+              *i1 -= '0';
+          i1++;
+      }
     }break;
   default:
     printf("ERROR(%s,%d) : Unsupported Matrix type %d!\n", 
