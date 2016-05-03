@@ -6,6 +6,8 @@
 
 #include <windows.h>
 
+#include <vector>
+
 #define F_RED		FOREGROUND_INTENSITY | FOREGROUND_RED
 #define F_BLUE		FOREGROUND_INTENSITY | FOREGROUND_BLUE
 #define F_GREEN		FOREGROUND_INTENSITY | FOREGROUND_GREEN
@@ -36,6 +38,61 @@ fflush(stderr);\
 
 using namespace CGE;
 
+class CatSprite
+{
+public:
+    CatSprite() : m_index(0) {}
+
+    ~CatSprite()
+    {
+        for(PIMAGE pimage : m_sprites)
+        {
+            delimage(pimage);
+        }
+
+        m_sprites.clear();
+    }
+
+    bool init(const char* path)
+    {
+        m_sprites.reserve(100);
+        char imageFileName[128];
+        for(int i = 0; i != 100; ++i)
+        {
+            sprintf(imageFileName, "%s/catjump_%03d.png", path, i);
+            PIMAGE image = newimage();
+            int ret = getimage_pngfile(image, imageFileName);
+            if(ret != 0)
+                return false;
+            m_sprites.push_back(image);
+        }
+        
+        PIMAGE img = m_sprites[0];
+        
+        m_width = getwidth(img);
+        m_height = getheight(img);
+
+        return true;
+    }
+
+    void render(int x, int y, float rot, float scaling)
+    {
+        putimage_rotatezoom(nullptr, m_sprites[m_index], x, y, 0.5, 1, rot, scaling, 1);
+        //putimage(x, y, m_sprites[m_index]);
+        ++m_index;
+        m_index %= m_sprites.size();
+    }
+
+    inline float getWidth() { return m_width; }
+    inline float getHeight() { return m_height; }
+
+private:
+    std::vector<PIMAGE> m_sprites;
+    float m_width, m_height;
+    int m_index;
+};
+
+
 int main(int argc, const char** argv)
 {
 #if 0
@@ -60,8 +117,8 @@ int main(int argc, const char** argv)
     }
 
 	CGEFaceTracker faceTracker;
-	faceTracker.setMaxImageSize(-1); //No Image scaling -- unmark this if you need more accuracy.
-	//faceTracker.setMaxImageSize(162); //Scale image by 162 -- unmark this if your device is too slow.
+	//faceTracker.setMaxImageSize(-1); //No Image scaling -- unmark this if you need more accuracy.
+	faceTracker.setMaxImageSize(240); //Scale image by 162 -- unmark this if your device is too slow.
 
 	CvCapture* camera = cvCreateCameraCapture(CV_CAP_ANY);
 	if(!camera)
@@ -77,12 +134,22 @@ int main(int argc, const char** argv)
 
     setinitmode(INIT_RENDERMANUAL);
     initgraph(scrWidth, scrHeight);
+    setbkmode(TRANSPARENT);
+    setcolor(0x00ff0000);
 
     setcaption("EGE FaceTracker By wysaid.");
 
 	cv::Mat frame,gray;
     PIMAGE egeImage = newimage(scrWidth, scrHeight);
     cv::Mat egeMat(getheight(egeImage), getwidth(egeImage), CV_8UC4, getbuffer(egeImage));
+
+    CatSprite catSprite;
+
+    if(!catSprite.init("../res"))
+    {
+        LOG_ERROR("Init sprite failed!");
+        return -1;
+    }
 
 	for(; is_run(); delay_fps(60))
 	{ 
@@ -130,9 +197,11 @@ int main(int argc, const char** argv)
             return -1;
         }
 
-		if(faceTracker.updateFace(gray, -1, 5, 3.0, 0.0001, false))
+        bool hasFace = faceTracker.updateFace(gray);
+
+		if(hasFace)
 		{
-//          faceTracker.drawMeshes(frame, cv::Scalar(255, 0, 255, 255));
+          faceTracker.drawMeshes(frame, cv::Scalar(255, 0, 255, 255));
 			faceTracker.drawFeature(frame, CGE_FACE_LEFT_EYEBROW, false);
 			faceTracker.drawFeature(frame, CGE_FACE_RIGHT_EYEBROW, false);
 			faceTracker.drawFeature(frame, CGE_FACE_LEFT_EYE);
@@ -178,10 +247,27 @@ int main(int argc, const char** argv)
             return -1;
         }
         
-        cv::line(egeMat, cv::Point(200, 200), cv::Point(400, 400), cv::Scalar(255, 0, 0, 255), 3);
-
         putimage(0, 0, egeImage);
-        line(0, 0, 100, 100);
+        if(hasFace)
+        {
+            const Vec2f& v = faceTracker.getCenterPos();
+            Vec2f&& eyeDir = faceTracker.getRightDir();
+            float eyeDis = eyeDir.length();
+            float roll = asinf(eyeDir[1] / eyeDis);
+            if(eyeDir[0] < 0.0f)
+            {
+                roll = PI - roll;
+            }
+            else
+            {
+                roll += PI * 2.0;
+            }
+
+            float scaling = eyeDis / catSprite.getWidth() * 5.0f;
+            catSprite.render(v[0], v[1], roll, scaling);
+        }
+        
+        outtextxy(10, 10, "EGE Face Tracker - Single Thread Demo.");
 	}
 
 	return 0;
