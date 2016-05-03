@@ -5,7 +5,19 @@ using namespace CGE;
 
 int main(int argc, const char** argv)
 {
+#if 0
+
+    char ftFile[256] = "../faceTracker/model/face2.tracker";
+    char conFile[256] = "../faceTracker/model/face.con";
+    char triFile[256] = "../faceTracker/model/face.tri";
+
+    CGEFaceTracker::setupTracker(ftFile, triFile, conFile);
+
+#else
+
 	CGEFaceTracker::setupTracker();
+
+#endif
 
 	if(!CGEFaceTracker::isTrackerSetup())
 		return -1;

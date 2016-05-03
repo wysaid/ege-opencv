@@ -96,7 +96,7 @@ namespace CGE
 
             static const int ftLen = sizeof(ftData) / sizeof(*ftData);
             std::string ftBuffer;
-            ftBuffer.reserve(700000); //700k data
+            ftBuffer.reserve(800000); //800k data
             for(int i = 0; i != ftLen; ++i)
             {
                 ftBuffer += ftData[i];
