@@ -169,6 +169,7 @@ int main(int argc, const char** argv)
             switch (c.key)
             {
             case 27:
+                cvReleaseCapture(&camera);
                 return 0;
             default:
 				faceTracker.resetFrame();
