@@ -93,7 +93,7 @@ private:
 };
 
 
-int main(int argc, const char** argv)
+int main()
 {
 #if 0
 
