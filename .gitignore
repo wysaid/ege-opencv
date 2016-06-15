@@ -256,3 +256,5 @@ REL_DLL/
 *.xccheckout
 *.dll
 *.exe
+*.ipdb
+*.iobj

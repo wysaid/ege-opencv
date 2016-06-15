@@ -198,24 +198,6 @@ int main()
 
         bool hasFace = faceTracker.updateFace(gray);
 
-		if(hasFace)
-		{
-// 			faceTracker.drawMeshes(frame, cv::Scalar(255, 0, 255, 255));
-// 			faceTracker.drawFeature(frame, CGE_FACE_LEFT_EYEBROW, false);
-// 			faceTracker.drawFeature(frame, CGE_FACE_RIGHT_EYEBROW, false);
-// 			faceTracker.drawFeature(frame, CGE_FACE_LEFT_EYE);
-// 			faceTracker.drawFeature(frame, CGE_FACE_RIGHT_EYE);
-// 			faceTracker.drawFeature(frame, CGE_FACE_JAW, false);
-// 			faceTracker.drawFeature(frame, CGE_FACE_OUTER_MOUTH);
-// 			faceTracker.drawFeature(frame, CGE_FACE_INNER_MOUTH);
-// 			faceTracker.drawFeature(frame, CGE_FACE_NOSE_BRIDGE, false);
-// 			faceTracker.drawFeature(frame, CGE_FACE_NOSE_BASE);
-		}
-		else
-		{
-			faceTracker.resetFrame();
-		}
-
 		if(frame.rows != scrHeight || frame.cols != scrWidth)
         {
             scrWidth = frame.cols;
@@ -267,9 +249,26 @@ int main()
 			float glassScaling = eyeDis / glassSprite.getWidth() * 2.5f;
 			glassSprite.render(v[0], v[1], 0.5f, 0.5f, roll, glassScaling);
         }
+		else
+		{
+			faceTracker.resetFrame();
+		}
         
         outtextxy(10, 10, "EGE Face Tracker - Single Thread Demo.");
 		outtextxy(10, 50, "Press esc to exit or the others to reset face mesh.");
+
+		{
+			static clock_t lastTime = clock();
+			static int frameCount = 0;
+			++frameCount;
+			clock_t currentTime = clock();
+			if (currentTime - lastTime > CLOCKS_PER_SEC)
+			{
+				LOG_INFO("Ïà»úÖ¡ÂÊ: %d\n", frameCount);
+				frameCount = 0;
+				lastTime = currentTime;
+			}
+		}
 	}
 
 	return 0;
