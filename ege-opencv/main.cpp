@@ -41,55 +41,55 @@ using namespace CGE;
 class MySprite
 {
 public:
-    MySprite() : m_index(0) {}
+	MySprite() : m_index(0) {}
 
-    ~MySprite()
-    {
-        for(PIMAGE pimage : m_sprites)
-        {
-            delimage(pimage);
-        }
+	~MySprite()
+	{
+		for(PIMAGE pimage : m_sprites)
+		{
+			delimage(pimage);
+		}
 
-        m_sprites.clear();
-    }
+		m_sprites.clear();
+	}
 
-    bool init(const char* pattern, int count)
-    {
-        m_sprites.reserve(100);
-        char imageFileName[128];
-        for(int i = 0; i != count; ++i)
-        {
-            sprintf(imageFileName, pattern, i);
-            PIMAGE image = newimage();
-            int ret = getimage_pngfile(image, imageFileName);
-            if(ret != 0)
-                return false;
-            m_sprites.push_back(image);
-        }
-        
-        PIMAGE img = m_sprites[0];
-        
-        m_width = getwidth(img);
-        m_height = getheight(img);
+	bool init(const char* pattern, int count)
+	{
+		m_sprites.reserve(100);
+		char imageFileName[128];
+		for(int i = 0; i != count; ++i)
+		{
+			sprintf(imageFileName, pattern, i);
+			PIMAGE image = newimage();
+			int ret = getimage_pngfile(image, imageFileName);
+			if(ret != 0)
+				return false;
+			m_sprites.push_back(image);
+		}
 
-        return true;
-    }
+		PIMAGE img = m_sprites[0];
 
-    void render(int x, int y, float centerX, float centerY, float rot, float scaling)
-    {
-        putimage_rotatezoom(nullptr, m_sprites[m_index], x, y, centerX, centerY, rot, scaling, 1);
-        //putimage(x, y, m_sprites[m_index]);
-        ++m_index;
-        m_index %= m_sprites.size();
-    }
+		m_width = getwidth(img);
+		m_height = getheight(img);
 
-    inline float getWidth() { return m_width; }
-    inline float getHeight() { return m_height; }
+		return true;
+	}
+
+	void render(int x, int y, float centerX, float centerY, float rot, float scaling)
+	{
+		putimage_rotatezoom(nullptr, m_sprites[m_index], x, y, centerX, centerY, rot, scaling, 1);
+		//putimage(x, y, m_sprites[m_index]);
+		++m_index;
+		m_index %= m_sprites.size();
+	}
+
+	inline float getWidth() { return m_width; }
+	inline float getHeight() { return m_height; }
 
 private:
-    std::vector<PIMAGE> m_sprites;
-    float m_width, m_height;
-    int m_index;
+	std::vector<PIMAGE> m_sprites;
+	float m_width, m_height;
+	int m_index;
 };
 
 
@@ -97,11 +97,11 @@ int main()
 {
 #if 0
 
-    char ftFile[256] = "../faceTracker/model/face2.tracker";
-    char conFile[256] = "../faceTracker/model/face.con";
-    char triFile[256] = "../faceTracker/model/face.tri";
+	char ftFile[256] = "../faceTracker/model/face2.tracker";
+	char conFile[256] = "../faceTracker/model/face.con";
+	char triFile[256] = "../faceTracker/model/face.tri";
 
-    CGEFaceTracker::setupTracker(ftFile, triFile, conFile);
+	CGEFaceTracker::setupTracker(ftFile, triFile, conFile);
 
 #else
 
@@ -110,11 +110,11 @@ int main()
 #endif
 
 	if(!CGEFaceTracker::isTrackerSetup())
-    {
-        LOG_ERROR("Setup tracker failed!");
-        getchar();
-        return -1;
-    }
+	{
+		LOG_ERROR("Setup tracker failed!");
+		getchar();
+		return -1;
+	}
 
 	CGEFaceTracker faceTracker;
 	//faceTracker.setMaxImageSize(-1); //No Image scaling -- unmark this if you need more accuracy.
@@ -130,131 +130,131 @@ int main()
 
 	LOG_INFO("Press ESC to quit.\nPress space/enter to reset face frame.\n");
 
-    int scrWidth = 640, scrHeight = 480;
+	int scrWidth = 640, scrHeight = 480;
 
-    setinitmode(INIT_RENDERMANUAL);
-    initgraph(scrWidth, scrHeight);
-    setbkmode(TRANSPARENT);
-    setcolor(0x00ff0000);
+	setinitmode(INIT_RENDERMANUAL);
+	initgraph(scrWidth, scrHeight);
+	setbkmode(TRANSPARENT);
+	setcolor(0x00ff0000);
 
-    setcaption("EGE FaceTracker By wysaid.");
+	setcaption("EGE FaceTracker By wysaid.");
 
 	cv::Mat frame,gray;
-    PIMAGE egeImage = newimage(scrWidth, scrHeight);
-    cv::Mat egeMat(getheight(egeImage), getwidth(egeImage), CV_8UC4, getbuffer(egeImage));
+	PIMAGE egeImage = newimage(scrWidth, scrHeight);
+	cv::Mat egeMat(getheight(egeImage), getwidth(egeImage), CV_8UC4, getbuffer(egeImage));
 
-    MySprite catSprite, glassSprite;
+	MySprite catSprite, glassSprite;
 
-    if(!(catSprite.init("../res/catjump_%03d.png", 100) && glassSprite.init("../res/glasses_%03d.png", 66)))
-    {
-        LOG_ERROR("Init sprite failed!");
-        return -1;
-    }
+	if(!(catSprite.init("../res/catjump_%03d.png", 100) && glassSprite.init("../res/glasses_%03d.png", 66)))
+	{
+		LOG_ERROR("Init sprite failed!");
+		return -1;
+	}
 
 	for(; is_run(); delay_fps(30))
 	{ 
 		IplImage* I = cvQueryFrame(camera);
 		if(I == nullptr)
-        {
-            LOG_INFO("Info: no capture for current loop, continue...");
-            continue;
-        }
+		{
+			LOG_INFO("Info: no capture for current loop, continue...");
+			continue;
+		}
 
 		frame = I;
 
-        if(kbhit())
-        {
-            key_msg c = getkey();
+		if(kbhit())
+		{
+			key_msg c = getkey();
 
-            switch (c.key)
-            {
-            case 27:
-                cvReleaseCapture(&camera);
-                return 0;
-            default:
+			switch (c.key)
+			{
+			case 27:
+				cvReleaseCapture(&camera);
+				return 0;
+			default:
 				faceTracker.resetFrame();
-                break;
-            }
-        }
+				break;
+			}
+		}
 
-        switch (frame.type())
-        {
-        case CV_8UC1:
-            gray = frame;
-            break;
-        case CV_8UC2:
-            cv::cvtColor(frame,gray,CV_BGR5652GRAY);
-            break;
-        case CV_8UC3:
-            cv::cvtColor(frame,gray,CV_BGR2GRAY); //Almost
-            break;
-        case CV_8UC4:
-            cv::cvtColor(frame,gray,CV_BGRA2GRAY);
-            break;
-        default:
-            LOG_ERROR("unsupported video format!");
-            return -1;
-        }
+		switch (frame.type())
+		{
+		case CV_8UC1:
+			gray = frame;
+			break;
+		case CV_8UC2:
+			cv::cvtColor(frame,gray,CV_BGR5652GRAY);
+			break;
+		case CV_8UC3:
+			cv::cvtColor(frame,gray,CV_BGR2GRAY); //Almost
+			break;
+		case CV_8UC4:
+			cv::cvtColor(frame,gray,CV_BGRA2GRAY);
+			break;
+		default:
+			LOG_ERROR("unsupported video format!");
+			return -1;
+		}
 
-        bool hasFace = faceTracker.updateFace(gray);
+		bool hasFace = faceTracker.updateFace(gray);
 
 		if(frame.rows != scrHeight || frame.cols != scrWidth)
-        {
-            scrWidth = frame.cols;
-            scrHeight = frame.rows;
-            initgraph(scrWidth, scrHeight);
-            LOG_INFO("reset window size: %dx%d", scrWidth, scrHeight);
-            delimage(egeImage);
-            egeImage = newimage(scrWidth, scrHeight);
-            egeMat = cv::Mat(scrHeight, scrWidth, CV_8UC4, getbuffer(egeImage));
-        }
+		{
+			scrWidth = frame.cols;
+			scrHeight = frame.rows;
+			initgraph(scrWidth, scrHeight);
+			LOG_INFO("reset window size: %dx%d", scrWidth, scrHeight);
+			delimage(egeImage);
+			egeImage = newimage(scrWidth, scrHeight);
+			egeMat = cv::Mat(scrHeight, scrWidth, CV_8UC4, getbuffer(egeImage));
+		}
 
-        switch (frame.type())
-        {
-        case CV_8UC1:
-            cv::cvtColor(frame, egeMat, CV_GRAY2BGRA);
-            break;
-        case CV_8UC2:
-            cv::cvtColor(frame,egeMat,CV_BGR5652BGRA);
-            break;
-        case CV_8UC3:
-            cv::cvtColor(frame,egeMat,CV_BGR2BGRA); //Almost
-            break;
-        case CV_8UC4:
-            frame.copyTo(egeMat);
-            break;
-        default:
-            LOG_ERROR("unsupported video format!");
-            return -1;
-        }
-        
-        putimage(0, 0, egeImage);
-        if(hasFace)
-        {
-            const Vec2f& v = faceTracker.getEyeCenterPos();
-            Vec2f&& eyeDir = faceTracker.getRightDir();
-            float eyeDis = eyeDir.length();
-            float roll = -asinf(eyeDir[1] / eyeDis);
-            if(eyeDir[0] < 0.0f)
-            {
-                roll = PI - roll;
-            }
-            else
-            {
-                roll += PI * 2.0;
-            }
+		switch (frame.type())
+		{
+		case CV_8UC1:
+			cv::cvtColor(frame, egeMat, CV_GRAY2BGRA);
+			break;
+		case CV_8UC2:
+			cv::cvtColor(frame,egeMat,CV_BGR5652BGRA);
+			break;
+		case CV_8UC3:
+			cv::cvtColor(frame,egeMat,CV_BGR2BGRA); //Almost
+			break;
+		case CV_8UC4:
+			frame.copyTo(egeMat);
+			break;
+		default:
+			LOG_ERROR("unsupported video format!");
+			return -1;
+		}
 
-            float catScaling = eyeDis / catSprite.getWidth() * 4.0f;
-            catSprite.render(v[0], v[1], 0.5f, 1.0f, roll, catScaling);
+		putimage(0, 0, egeImage);
+		if(hasFace)
+		{
+			const Vec2f& v = faceTracker.getEyeCenterPos();
+			Vec2f&& eyeDir = faceTracker.getRightDir();
+			float eyeDis = eyeDir.length();
+			float roll = -asinf(eyeDir[1] / eyeDis);
+			if(eyeDir[0] < 0.0f)
+			{
+				roll = PI - roll;
+			}
+			else
+			{
+				roll += PI * 2.0;
+			}
+
+			float catScaling = eyeDis / catSprite.getWidth() * 4.0f;
+			catSprite.render(v[0], v[1], 0.5f, 1.0f, roll, catScaling);
 			float glassScaling = eyeDis / glassSprite.getWidth() * 2.5f;
 			glassSprite.render(v[0], v[1], 0.5f, 0.5f, roll, glassScaling);
-        }
+		}
 		else
 		{
 			faceTracker.resetFrame();
 		}
-        
-        outtextxy(10, 10, "EGE Face Tracker - Single Thread Demo.");
+
+		outtextxy(10, 10, "EGE Face Tracker - Single Thread Demo.");
 		outtextxy(10, 50, "Press esc to exit or the others to reset face mesh.");
 
 		{
