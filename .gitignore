@@ -258,3 +258,5 @@ REL_DLL/
 *.exe
 *.ipdb
 *.iobj
+*.db
+*.opendb

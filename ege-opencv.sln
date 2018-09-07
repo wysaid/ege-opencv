@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "singleThreadDemo", "ege-opencv\ege-opencv.vcxproj", "{8FEB5AD8-63EB-4F3E-A23E-1135C02574A5}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -14,6 +14,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "multiThreadDemo", "multiThr
 	ProjectSection(ProjectDependencies) = postProject
 		{400E5EBC-2196-4848-AF80-49BBA24A59BA} = {400E5EBC-2196-4848-AF80-49BBA24A59BA}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "faceSubstitution", "faceSubstitution\faceSubstitution.vcxproj", "{A5FB308E-8EE4-4EC6-97C3-356986820838}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,14 @@ Global
 		{1F36A58A-80A9-4FA0-A383-340A14259689}.Release|Win32.Build.0 = Release|Win32
 		{1F36A58A-80A9-4FA0-A383-340A14259689}.Release|x64.ActiveCfg = Release|x64
 		{1F36A58A-80A9-4FA0-A383-340A14259689}.Release|x64.Build.0 = Release|x64
+		{A5FB308E-8EE4-4EC6-97C3-356986820838}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A5FB308E-8EE4-4EC6-97C3-356986820838}.Debug|Win32.Build.0 = Debug|Win32
+		{A5FB308E-8EE4-4EC6-97C3-356986820838}.Debug|x64.ActiveCfg = Debug|x64
+		{A5FB308E-8EE4-4EC6-97C3-356986820838}.Debug|x64.Build.0 = Debug|x64
+		{A5FB308E-8EE4-4EC6-97C3-356986820838}.Release|Win32.ActiveCfg = Release|Win32
+		{A5FB308E-8EE4-4EC6-97C3-356986820838}.Release|Win32.Build.0 = Release|Win32
+		{A5FB308E-8EE4-4EC6-97C3-356986820838}.Release|x64.ActiveCfg = Release|x64
+		{A5FB308E-8EE4-4EC6-97C3-356986820838}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
