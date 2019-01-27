@@ -118,7 +118,7 @@ int main()
 
 	CGEFaceTracker faceTracker;
 	//faceTracker.setMaxImageSize(-1); //No Image scaling -- unmark this if you need more accuracy.
-	faceTracker.setMaxImageSize(240); //Scale image by 162 -- unmark this if your device is too slow.
+	faceTracker.setMaxImageSize(240); //Scale image by 240 -- unmark this if your device is too slow.
 
 	CvCapture* camera = cvCreateCameraCapture(CV_CAP_ANY);
 	if(!camera)
@@ -215,10 +215,10 @@ int main()
 			cv::cvtColor(frame, egeMat, CV_GRAY2BGRA);
 			break;
 		case CV_8UC2:
-			cv::cvtColor(frame,egeMat,CV_BGR5652BGRA);
+			cv::cvtColor(frame, egeMat,CV_BGR5652BGRA);
 			break;
 		case CV_8UC3:
-			cv::cvtColor(frame,egeMat,CV_BGR2BGRA); //Almost
+			cv::cvtColor(frame, egeMat,CV_BGR2BGRA); //Almost
 			break;
 		case CV_8UC4:
 			frame.copyTo(egeMat);

@@ -184,7 +184,7 @@ protected:
 				clock_t currentTime = clock();
 				if(currentTime - lastTime > CLOCKS_PER_SEC)
 				{
-					LOG_INFO("人脸识别帧率: %d\n", frameCount);
+					LOG_INFO("浜鸿劯璇嗗埆甯х巼: %d\n", frameCount);
 					frameCount = 0;
 					lastTime = currentTime;
 				}
@@ -225,7 +225,7 @@ int main()
 
 	CGEFaceTracker faceTracker;
 	//faceTracker.setMaxImageSize(-1); //No Image scaling -- unmark this if you need more accuracy.
-	faceTracker.setMaxImageSize(320); //Scale image by 162 -- unmark this if your device is too slow.
+        faceTracker.setMaxImageSize(320); //Scale image by 320 -- unmark this if your device is too slow.
 
 	CvCapture* camera = cvCreateCameraCapture(CV_CAP_ANY);
 	if (!camera)
@@ -316,7 +316,7 @@ int main()
 			}
 
 			myThread.runFunc([&hasFace, &faceTracker, ref]() {
-				//使用较高的精准度
+				//浣跨敤杈冮珮鐨勭簿鍑嗗害
 				hasFace = faceTracker.updateFace(*ref, -1, 10, 3.0, 0.001, true);
 			});
 		}
