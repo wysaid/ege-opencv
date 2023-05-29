@@ -78,7 +78,6 @@ namespace CGE
 
     void CGEFaceTracker::setupTracker()
     {
-#ifdef _CGE_USE_INTERNAL_TRACKER_
         if(_isTrackerOK)
         {
             _tracker.FrameReset();
@@ -109,9 +108,6 @@ namespace CGE
             _conModel = FACETRACKER::IO::LoadConByData(conData);
             _isTrackerOK = true;
         }
-#else
-        assert(0); //This functions should not be called if no '_CGE_USE_INTERNAL_TRACKER_' defined!
-#endif
     }
     
     bool CGEFaceTracker::updateFace(cv::Mat& faceImage, int framePerDetection, int iteration, double clamp, double tolerance, bool checkStatus)
